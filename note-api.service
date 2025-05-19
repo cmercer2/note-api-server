@@ -1,0 +1,13 @@
+[Unit]
+Description=Flask Note API
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/cmercer/note-api/server.py
+WorkingDirectory=/home/cmercer/note-api
+Restart=always
+User=cmercer
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
