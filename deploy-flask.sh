@@ -9,7 +9,7 @@ REMOTE_HOST="raspberrypi"
 SERVICE_FILE="note-api.service"
 PY_FILE="server.py"
 REMOTE_SERVICE_PATH="/etc/systemd/system/"
-REMOTE_APP_PATH="/home/cmercer/note-api/"
+REMOTE_APP_PATH="/home/cmercer/github/note-api-server/"
 
 # Copy service file (requires root on remote)
 scp "$SERVICE_FILE" "$REMOTE_USER@$REMOTE_HOST:/tmp/"
