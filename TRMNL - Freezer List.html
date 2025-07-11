@@ -1,0 +1,20 @@
+<div class="layout">
+  <table class="table">
+    <tbody>
+      <tr>
+        <td>
+          {% for item in list %}
+            <div class="item">
+              <div class="label">• {{ item }}</div>
+            </div>
+          {% endfor %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="title_bar">
+  <img class="image" src="https://usetrmnl.com/images/plugins/trmnl--render.svg">
+  <span class="title">{{ title }}</span>
+</div>

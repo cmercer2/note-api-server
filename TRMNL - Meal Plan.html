@@ -1,0 +1,95 @@
+<div class="layout">
+  {% assign current_day = 'now' | date: '%A' %}
+  {% assign current_week = 'now' | date: '%V' %}
+  <table class="table">
+
+    <tbody>
+
+      <tr>
+        <td><span class="label label--outline {% if current_day == 'Monday' %}label--inverted{% endif %} mr--8 p--1">Monday</span></td>
+        <td>
+          {% for item in list.Monday %}
+            <div class="item">
+              <div class="label">{{ item }}</div>
+            </div>
+          {% endfor %}
+        </td>
+
+      </tr>
+      <tr>
+        <td><span class="label label--outline {% if current_day == 'Tuesday' %}label--inverted{% endif %} mr--8 p--1">Tuesday</span></td>
+        <td>
+          {% for item in list.Tuesday %}
+            <div class="item">
+              <div class="label">{{ item }}</div>
+            </div>
+          {% endfor %}
+        </td>
+
+      </tr>
+      <tr>
+        <td><span class="label label--outline {% if current_day == 'Wednesday' %}label--inverted{% endif %} mr--8 p--1">Wednesday</span></td>
+        <td>
+          {% for item in list.Wednesday %}
+            <div class="item">
+              <div class="label">{{ item }}</div>
+            </div>
+          {% endfor %}
+        </td>
+
+      </tr>
+      <tr>
+        <td><span class="label label--outline {% if current_day == 'Thursday' %}label--inverted{% endif %} mr--8 p--1">Thursday</span></td>
+        <td>
+          {% for item in list.Thursday %}
+            <div class="item">
+              <div class="label">{{ item }}</div>
+            </div>
+          {% endfor %}
+        </td>
+
+      </tr>
+      <tr>
+        <td><span class="label label--outline {% if current_day == 'Friday' %}label--inverted{% endif %} mr--8 p--1">Friday</span></td>
+        <td>
+          {% for item in list.Friday %}
+            <div class="item">
+              <div class="label">{{ item }}</div>
+            </div>
+          {% endfor %}
+        </td>
+
+      </tr>
+      <tr>
+        <td><span class="label label--outline {% if current_day == 'Saturday' %}label--inverted{% endif %} mr--8 p--1">Saturday</span></td>
+        <td>
+          {% for item in list.Saturday %}
+            <div class="item">
+              <div class="label">{{ item }}</div>
+            </div>
+          {% endfor %}
+        </td>
+
+      </tr>
+      <tr>
+        <td><span class="label label--outline {% if current_day == 'Sunday' %}label--inverted{% endif %} mr--8 p--1">Sunday</span></td>
+        <td>
+          {% for item in list.Sunday %}
+            <div class="item">
+              <div class="label">{{ item }}</div>
+            </div>
+          {% endfor %}
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
+
+
+
+</div>
+
+<div class="title_bar">
+  <span class="title">Weekly Meal Planner</span>
+  <span class="instance">CW {{current_week}} </span>
+</div>
