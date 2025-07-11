@@ -2,11 +2,9 @@ from flask import Flask, request, jsonify
 import requests
 import json
 import re
+from config import FREEZER_PLUGIN_WEBHOOK_URL, MEAL_PLAN_WEBHOOK_URL
 
 app = Flask(__name__)
-
-FREEZER_PLUGIN_WEBHOOK_URL = 'https://usetrmnl.com/api/custom_plugins/40a4e8a8-832f-4d10-b84b-322a51351199'
-MEAL_PLAN_WEBHOOK_URL = "https://usetrmnl.com/api/custom_plugins/79f83cc5-c1bd-489d-bd9f-5aa8d211f780"
 
 @app.route('/freezer-list', methods=['GET', 'POST'])
 def note():

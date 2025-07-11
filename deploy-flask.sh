@@ -8,6 +8,7 @@ REMOTE_USER="cmercer"
 REMOTE_HOST="raspberrypi"
 SERVICE_FILE="note-api.service"
 PY_FILE="server.py"
+CONFIG_FILE="config.py"
 REMOTE_SERVICE_PATH="/etc/systemd/system/"
 REMOTE_APP_PATH="/home/cmercer/github/note-api-server/"
 
@@ -17,6 +18,7 @@ ssh "$REMOTE_USER@$REMOTE_HOST" "sudo mv /tmp/$SERVICE_FILE $REMOTE_SERVICE_PATH
 
 # Copy server.py
 scp "$PY_FILE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_APP_PATH"
+scp "$CONFIG_FILE" "$REMOTE_USER@$REMOTE_HOST:$REMOTE_APP_PATH"
 
 # Restart the service
 ssh "$REMOTE_USER@$REMOTE_HOST" "sudo systemctl daemon-reload && sudo systemctl restart note-api.service && sudo systemctl status note-api.service"
