@@ -1,6 +1,4 @@
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Freezer Inventory</title>
+
 <style>
   body {
     font-family: monospace;
@@ -48,7 +46,7 @@
   .item-cell {
     border-bottom: 1px solid #ccc;
     padding: 1px 3px;
-    font-size: 8px;
+    font-size: 9px;
     vertical-align: top;
   }
 
@@ -66,22 +64,33 @@
   .full-width {
     width: 100%;
   }
+
+  .left-column {
+    width: calc(50% - 2px);
+    height: 100%;
+  }
+
+  .right-column {
+    width: calc(50% - 2px);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stretch-table {
+    flex-grow: 1;
+  }
 </style>
 
 {% if list %}
-<div class="layout layout--row layout--top" style="flex-wrap: wrap; gap: 4px;">
+<div class="layout layout--row layout--top" style="flex-wrap: wrap; gap: 4px; align-items: stretch;">
   {% for category in list %}
-  <div class="{% if category[0] == 'Meat' %}full-width{% else %}half-width{% endif %}">
+  {% if category[0] == 'Meat' %}
+  <div class="full-width">
     <table class="category-table">
       <tr>
-        {% if category[0] == "Meat" %}
         <td class="category-header" colspan="2">{{ category[0] }}</td>
-        {% else %}
-        <td class="category-header">{{ category[0] }}</td>
-        {% endif %}
       </tr>
-
-      {% if category[0] == "Meat" %}
       <tr>
         {% for subcategory in category[1] %}
         <td style="width: 50%; vertical-align: top;">
@@ -92,20 +101,49 @@
         </td>
         {% endfor %}
       </tr>
-      {% else %}
+    </table>
+  </div>
+  {% endif %}
+  {% endfor %}
+
+  <div class="left-column">
+    {% for category in list %}
+    {% if category[0] == 'Ready Meals' %}
+    <table class="category-table stretch-table">
+      <tr>
+        <td class="category-header">{{ category[0] }}</td>
+      </tr>
       {% for item in category[1] %}
       <tr>
         <td class="item-cell">{{ item }}</td>
       </tr>
       {% endfor %}
-      {% endif %}
     </table>
+    {% endif %}
+    {% endfor %}
   </div>
-  {% endfor %}
+
+  <div class="right-column">
+    {% for category in list %}
+    {% unless category[0] == 'Meat' or category[0] == 'Ready Meals' %}
+    <table class="category-table">
+      <tr>
+        <td class="category-header">{{ category[0] }}</td>
+      </tr>
+      {% for item in category[1] %}
+      <tr>
+        <td class="item-cell">{{ item }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endunless %}
+    {% endfor %}
+  </div>
 </div>
 {% else %}
 <p>No data</p>
 {% endif %}
+
 <div class="title_bar">
   <img class="image" src="https://usetrmnl.com/images/plugins/trmnl--render.svg">
   <span class="title">{{ title }}</span>
