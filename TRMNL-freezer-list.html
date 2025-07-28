@@ -1,19 +1,111 @@
-<div class="layout">
-  <table class="table">
-    <tbody>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freezer Inventory</title>
+<style>
+  body {
+    font-family: monospace;
+    margin: 0;
+    padding: 6px;
+    background-color: white;
+    color: black;
+    font-size: 9px;
+    line-height: 1.1;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 0 0 6px 0;
+    font-size: 11px;
+    font-weight: bold;
+    border-bottom: 1px solid black;
+    padding-bottom: 2px;
+  }
+
+  .category-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 4px;
+  }
+
+  .category-header {
+    font-weight: bold;
+    font-size: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid black;
+    padding: 1px 3px;
+    text-align: center;
+  }
+
+  .subcategory-header {
+    font-weight: bold;
+    font-size: 9px;
+    padding: 1px 3px;
+    text-align: left;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid black;
+  }
+
+  .item-cell {
+    border-bottom: 1px solid #ccc;
+    padding: 1px 3px;
+    font-size: 8px;
+    vertical-align: top;
+  }
+
+  .meat-item {
+    padding: 1px 3px;
+    font-size: 8px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 1px;
+  }
+
+  .half-width {
+    width: calc(50% - 2px);
+  }
+
+  .full-width {
+    width: 100%;
+  }
+</style>
+
+{% if list %}
+<div class="layout layout--row layout--top" style="flex-wrap: wrap; gap: 4px;">
+  {% for category in list %}
+  <div class="{% if category[0] == 'Meat' %}full-width{% else %}half-width{% endif %}">
+    <table class="category-table">
       <tr>
-        <td>
-          {% for item in list %}
-            <div class="item">
-              <div class="label">• {{ item }}</div>
-            </div>
+        {% if category[0] == "Meat" %}
+        <td class="category-header" colspan="2">{{ category[0] }}</td>
+        {% else %}
+        <td class="category-header">{{ category[0] }}</td>
+        {% endif %}
+      </tr>
+
+      {% if category[0] == "Meat" %}
+      <tr>
+        {% for subcategory in category[1] %}
+        <td style="width: 50%; vertical-align: top;">
+          <div class="subcategory-header">{{ subcategory[0] }}</div>
+          {% for item in subcategory[1] %}
+          <div class="meat-item">{{ item }}</div>
           {% endfor %}
         </td>
+        {% endfor %}
       </tr>
-    </tbody>
-  </table>
+      {% else %}
+      {% for item in category[1] %}
+      <tr>
+        <td class="item-cell">{{ item }}</td>
+      </tr>
+      {% endfor %}
+      {% endif %}
+    </table>
+  </div>
+  {% endfor %}
 </div>
-
+{% else %}
+<p>No data</p>
+{% endif %}
 <div class="title_bar">
   <img class="image" src="https://usetrmnl.com/images/plugins/trmnl--render.svg">
   <span class="title">{{ title }}</span>

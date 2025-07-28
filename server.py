@@ -10,46 +10,75 @@ app = Flask(__name__)
 def note():
     if request.method == 'POST':
         try:
-            note_data = request.get_json()
+            raw_data = request.get_data(as_text=True)
+            with open('raw_freezer_request.txt', 'w') as f:
+                f.write(raw_data)
+
+            note_data = json.loads(raw_data)
             note = note_data.get('list', '')
 
-            # Save locally
-            lines = []
-            # Remove bullet points and duplicates, sort alphabetically
-            for line in note.splitlines():
-                line = re.sub(r'^\s*[\u2022\u2023\u25E6\u2043\u2219\-•]+', '', line).strip()
-                if line:
-                    lines.append(line)
-            lines = list(set(lines))  # Remove duplicates
-            lines.sort()  # Sort alphabetically
-            plain_text = '\n'.join(lines)
+            freezer_dict = {}
+            current_category = None
+            current_subcategory = None
+
+            lines = [line for line in note.splitlines() if line.strip()]
+            if lines and lines[0].strip().lower() == 'freezer':
+                lines = lines[1:]
+
+            for idx, raw in enumerate(lines):
+                indent = len(raw) - len(raw.lstrip())
+                text = re.sub(r'^[\*\-•\u2022\u2023\u25E6\u2043\u2219]+\s*', '', raw.strip())
+
+                if indent == 0:
+                    current_category = text
+                    freezer_dict[current_category] = []
+                    current_subcategory = None
+                elif indent == 4:
+                    # Peek at next line to decide if this is a subcategory or item
+                    next_indent = None
+                    if idx + 1 < len(lines):
+                        next_raw = lines[idx + 1]
+                        next_indent = len(next_raw) - len(next_raw.lstrip())
+
+                    if next_indent is not None and next_indent > indent:
+                        current_subcategory = text
+                        if isinstance(freezer_dict[current_category], list):
+                            freezer_dict[current_category] = {}
+                        freezer_dict[current_category][current_subcategory] = []
+                    else:
+                        # Treat this line as an item
+                        if isinstance(freezer_dict[current_category], dict):
+                            freezer_dict[current_category][text] = []
+                        else:
+                            freezer_dict[current_category].append(text)
+                elif indent >= 8:
+                    if current_subcategory and isinstance(freezer_dict[current_category], dict):
+                        freezer_dict[current_category][current_subcategory].append(text)
+                    else:
+                        freezer_dict[current_category].append(text)
+
             with open('received_freezer_list.txt', 'w') as f:
-                f.write(plain_text)
+                f.write(json.dumps(freezer_dict, indent=2))
 
             # Forward to webhook
             payload = {
                 "merge_variables": {
                     "title": "Freezer Contents",
-                    "list": plain_text.splitlines()
+                    "list": freezer_dict
                 }
             }
-            print("Webhook payload:\n", json.dumps(payload, indent=2))
+            print("Freezer webhook payload:\n", json.dumps(payload, indent=2))
             response = requests.post(FREEZER_PLUGIN_WEBHOOK_URL, json=payload, headers={'Content-Type': 'application/json'})
 
-            return jsonify({
-                'status': 'received',
-                'length': len(note),
-                'webhook_status': response.status_code
-            })
-
+            return jsonify({'status': 'parsed', 'length': len(note), 'webhook_status': response.status_code})
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 500
 
     else:
         try:
-            with open('received_freezer_list.txt', 'r') as f:
-                content = f.read()
-            return jsonify(content.splitlines())
+            with open('raw_freezer_request.txt', 'r') as f:
+                content = json.load(f)
+            return jsonify(content)
         except FileNotFoundError:
             return jsonify({'note': '', 'length': 0})
         except Exception as e:
