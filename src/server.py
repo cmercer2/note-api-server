@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import requests
 import json
 import re
-from config import FREEZER_PLUGIN_WEBHOOK_URL, MEAL_PLAN_WEBHOOK_URL
+from src.config import FREEZER_PLUGIN_WEBHOOK_URL, MEAL_PLAN_WEBHOOK_URL
 
 app = Flask(__name__)
 
@@ -34,7 +34,6 @@ def note():
                     freezer_dict[current_category] = []
                     current_subcategory = None
                 elif indent == 4:
-                    # Peek at next line to decide if this is a subcategory or item
                     next_indent = None
                     if idx + 1 < len(lines):
                         next_raw = lines[idx + 1]
@@ -46,7 +45,6 @@ def note():
                             freezer_dict[current_category] = {}
                         freezer_dict[current_category][current_subcategory] = []
                     else:
-                        # Treat this line as an item
                         if isinstance(freezer_dict[current_category], dict):
                             freezer_dict[current_category][text] = []
                         else:
@@ -60,7 +58,6 @@ def note():
             with open('received_freezer_list.txt', 'w') as f:
                 f.write(json.dumps(freezer_dict, indent=2))
 
-            # Forward to webhook
             payload = {
                 "merge_variables": {
                     "title": "Freezer Contents",
@@ -84,7 +81,6 @@ def note():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
-# --- Meal plan endpoint ---
 @app.route('/meal-plan', methods=['GET', 'POST'])
 def meal_plan():
     if request.method == 'GET':
@@ -102,7 +98,6 @@ def meal_plan():
         note_data = request.get_json()
         note = note_data.get('list', '')
 
-        # Convert bulleted list into a dictionary
         meal_plan_dict = {}
         current_day = None
         for line in note.splitlines():
@@ -114,14 +109,12 @@ def meal_plan():
             elif current_day:
                 meal_plan_dict[current_day].append(line)
 
-        # Sort by weekday order
         weekday_order = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         ordered_meal_plan = {day: meal_plan_dict[day] for day in weekday_order if day in meal_plan_dict}
 
         with open('received_meal_plan.txt', 'w') as f:
             f.write(json.dumps(ordered_meal_plan, indent=2))
 
-        # Forward to webhook
         payload = {
             "merge_variables": {
                 "title": "Weekly Meal Plan",
