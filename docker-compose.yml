@@ -1,5 +1,6 @@
 services:
   flask-app:
+    container_name: note-api-server
     build:
       context: .
       dockerfile: Dockerfile
