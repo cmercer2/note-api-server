@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import requests
 import json
 import re
-from src.config import FREEZER_PLUGIN_WEBHOOK_URL, MEAL_PLAN_WEBHOOK_URL
+from config import FREEZER_PLUGIN_WEBHOOK_URL, MEAL_PLAN_WEBHOOK_URL
 
 app = Flask(__name__)
 
@@ -133,4 +133,4 @@ def meal_plan():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=12349)

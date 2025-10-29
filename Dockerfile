@@ -1,19 +1,23 @@
 FROM python:3.9-slim
 
-# Set the working directory
+# Prevent python from buffering output (helps logs)
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
 WORKDIR /app
 
-# Copy the requirements file
-COPY requirements.txt .
+# Copy requirements and install
+COPY requirements.txt /app/
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r /app/requirements.txt
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy the src directory (keep it as a package so `from src.config` works)
+COPY src/ /app/src
 
-# Copy the application code
-COPY src/ .
+# Run from inside the package dir so relative paths for files are consistent
+WORKDIR /app/src
 
-# Expose the port the app runs on
-EXPOSE 5000
+# Expose the port the Flask app uses
+EXPOSE 12349
 
-# Define the command to run the application
 CMD ["python", "server.py"]

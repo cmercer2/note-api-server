@@ -1,14 +1,11 @@
 services:
   flask-app:
     build:
-      context: ./src
-      dockerfile: ../Dockerfile
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5000:5000"
-    # env_file:      <-- removed because config.py contains the variables
+      - "12349:12349"
     restart: unless-stopped
-    volumes:
-      - ./src:/app   # useful for dev (live code); remove for production to use image files
     networks:
       - note-api-network
 
